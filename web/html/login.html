@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+{{template "head" .}}
+<style>
+
+    #app {
+        padding-top: 100px;
+    }
+
+    .ant-btn, .ant-input {
+        height: 50px;
+        border-radius: 30px;
+    }
+
+    .ant-input-affix-wrapper .ant-input-prefix {
+        left: 23px;
+    }
+
+    .ant-input-affix-wrapper .ant-input:not(:first-child) {
+        padding-left: 50px;
+    }
+
+</style>
+<body>
+<a-layout id="app" v-cloak>
+    <transition name="list" appear>
+        <a-layout-content>
+            <a-row type="flex" justify="center">
+                <a-col :xs="22" :sm="20" :md="16" :lg="12" :xl="8">
+                    <center><img src="{{ .base_path }}assets/img/logo.svg" alt="{{ .title }}" width="240" height="200"></center>
+                </a-col>
+            </a-row>
+            <a-row type="flex" justify="center">
+                <a-col :xs="22" :sm="20" :md="16" :lg="12" :xl="8">
+                    <a-form>
+                        <a-form-item>
+                            <a-input v-model.trim="user.username" placeholder='{{ i18n "username" }}'
+                                     @keydown.enter.native="login" autofocus>
+                                <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)"/>
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item>
+                            <a-input type="password" v-model.trim="user.password"
+                                     placeholder='{{ i18n "password" }}' @keydown.enter.native="login">
+                                <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)"/>
+                            </a-input>
+                        </a-form-item>
+                        <a-form-item>
+                            <a-button block type="primary" @click="login" :loading="loading">{{ i18n "login" }}</a-button>
+                        </a-form-item>
+                    </a-form>
+                </a-col>
+            </a-row>
+        </a-layout-content>
+    </transition>
+</a-layout>
+{{template "js" .}}
+<script>
+    const app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            loading: false,
+            user: new User(),
+        },
+        methods: {
+            async login() {
+                this.loading = true;
+                const msg = await HttpUtil.post('/login', this.user);
+                this.loading = false;
+                if (msg.success) {
+                    location.href = basePath + 'xui/';
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
